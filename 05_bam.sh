@@ -3,14 +3,12 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=2G
 #SBATCH --time=04:00:00
-#SBATCH --output=/data/users/dbassi/rnaseq_course/logFiles/05_align_reads_%j.o
+#SBATCH --output=/data/users/dbassi/rnaseq_course/logFiles/05_bamP3_%j.o
 #SBATCH --partition=pall
 
 READS=/data/users/dbassi/rnaseq_course/reads
-GENOME=/data/users/dbassi/rnaseq_course/reference_genome
 THREADS=$SLURM_CPUS_PER_TASK
-INDEX=/data/users/dbassi/rnaseq_course/reference_genome
-MAP=/data/users/dbassi/rnaseq_course/mapped_reads 
+MAP=/data/users/dbassi/rnaseq_course/mapped_reads2 
 
 # load the module for transforming a sam file into a bam files
 module add UHTS/Analysis/samtools/1.10;
