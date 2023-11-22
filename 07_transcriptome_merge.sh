@@ -1,4 +1,4 @@
-#!/usr/bin/env/ bash
+#!/usr/bin/env bash
 
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=4G
@@ -8,7 +8,7 @@
 
 THREADS=$SLURM_CPUS_PER_TASK
 ASSEMBLY=/data/users/dbassi/rnaseq_course/transcriptome_assembly/PRI
-MERGE=$/data/users/dbassi/rnaseq_course/transcriptome_assembly
+MERGE=/data/users/dbassi/rnaseq_course/transcriptome_assembly
 REFERENCE=/data/users/dbassi/rnaseq_course/reference_genome
 
 
