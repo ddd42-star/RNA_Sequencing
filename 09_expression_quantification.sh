@@ -11,13 +11,13 @@ THREADS=$SLURM_CPUS_PER_TASK
 GENOME=/data/courses/rnaseq_course/lncRNAs/Project1/references
 ANNOTATION=/data/users/dbassi/rnaseq_course/transcriptome_assembly
 EXPRESSION=/data/users/dbassi/rnaseq_course/expression
-ALLANNOTATION=/data/users/dbassi/rnaseq_course/expression/R2_4
+ALLANNOTATION=/data/users/dbassi/rnaseq_course/expression/P1
 FASTQ=/data/users/dbassi/rnaseq_course/reads
 
 
 #create a directory if it doesn't exist yet
 mkdir -p /data/users/dbassi/rnaseq_course/expression
-mkdir -p /data/users/dbassi/rnaseq_course/expression/R2_4
+mkdir -p /data/users/dbassi/rnaseq_course/expression/P1
 
 
 #load module kallisto
@@ -31,4 +31,4 @@ kallisto index -i $EXPRESSION/all_kallisto_index $EXPRESSION/all_transcriptome.f
 
 
 #quantification algorithm
-kallisto quant -i $EXPRESSION/all_kallisto_index -o $ALLANNOTATION --rf-stranded --threads $THREADS $FASTQ/3_4_L3_R1_001_QDBZnz0vm8Gd.fastq $FASTQ/3_4_L3_R2_001_ng3ASMYgDCPQ.fastq
+kallisto quant -i $EXPRESSION/all_kallisto_index -o $ALLANNOTATION -b 599 --rf-stranded --threads $THREADS $FASTQ/P1_L3_R1_001_9L0tZ86sF4p8.fastq $FASTQ/P1_L3_R2_001_yd9NfV9WdvvL.fastq
