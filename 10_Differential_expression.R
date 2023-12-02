@@ -30,7 +30,7 @@ metadata["path"] <- kall_dir
 metadata
 
 #load annotable table
-annotable <- read.csv2("annotable.txt")
+annotable <- read.csv2("annotable.txt", sep = ";")
 annotable
 #checks the data and if there a column more, deleted
 annotable <- annotable[1:length(annotable)-1]
@@ -38,28 +38,36 @@ annotable
 #add col names transcription_id, gene_id, gene_names,gene_type,transcript_type,transcript_type
 colnames(annotable) <- c("target_id","ens_gene","ext_gene","gene_biotype", "transcript_type")
 annotable
+
+#rename novel gene with biotype novel
+annotable$gene_biotype[annotable$gene_biotype==""] <- "novel"
+# rename novel transcript with biotype novel
+annotable$transcript_type[annotable$transcript_type==""] <- "novel"
+tail(annotable)
+
 #save condition
 condition <- ~ metadata$condition
 condition
 
 # sleuth preparation object
-sc2 <- sleuth_prep(metadata, condition, target_mapping = annotable, read_bootstrap_tpm = TRUE, extra_bootstrap_summary = TRUE, transform_fun_counts = function(x) log2(x + 0.5), num_cores = 8)
+sc2 <- sleuth_prep(metadata, condition,target_mapping = annotable, read_bootstrap_tpm = TRUE, extra_bootstrap_summary = TRUE, transform_fun_counts = function(x) log2(x + 0.5))
 #sc2 <- sleuth_prep(metadata, condition, target_mapping = annotable)
 
-# 1 fit model
+# 1 fit model, there is no difference between the two conditions
+nop <- sleuth_fit(sc2,~ 1,"reduced")
+# 2 fit full model that assumesa transcript is differential expressed between two conditions
 # condition tested first alphabetically is the control
-op <- sleuth_fit(sc2, condition,fit_name = "full")
+op <- sleuth_fit(nop, condition,fit_name = "full")
 
 #Checks model
 models(op)
 
-# new fit reduce
-nop <- sleuth_fit(op,~ 1,"reduced")
-
 # wade test
-cc <- sleuth_wt(nop,"metadata$conditionreads","full")
+cc <- sleuth_wt(op,"metadata$conditionreads","full")
+
+models(cc)
 # results shown
-table <- sleuth_results(cc,"metadata$conditionreads","wt", show_all = TRUE,rename_cols = TRUE)
+table <- sleuth_results(cc,"metadata$conditionreads","wt", which_model = "full",show_all = FALSE)
 table
 sleuth_significant <- dplyr::filter(table, qval <= 0.05)
 
@@ -79,28 +87,47 @@ library(EnhancedVolcano)
 #plot with pCutoff <= 0.05
 EnhancedVolcano(table, lab = table$ext_gene, x="b", y="qval", pCutoff = 0.05, xlim = c(-10,10), ylim = c(0,150),title = "Paraclonal vs Parental")
 
-# filter for lncRNA,protein and NA
-filter_table <- dplyr::filter(table, (gene_biotype == " protein_coding" | gene_biotype==" lncRNA" | gene_biotype == "NA"),  qval <= 0.05)
+# filter for lncRNA,protein and novel
+filter_table <- dplyr::filter(table, (gene_biotype == " protein_coding" | gene_biotype==" lncRNA" | gene_biotype == "novel"))
 #filter protein_coding, NA, lncRNA
 filter_table
 first_twenty <- c(filter_table$ext_gene[1:20])
 EnhancedVolcano(filter_table, lab = filter_table$ext_gene, x = "b", y = "qval", title = "lncRNA and protein differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE)
 
-# filter lncRNA
-filter_lncrna <- dplyr::filter(table, gene_biotype==" lncRNA",  qval <= 0.05, transcript_type==" lncRNA")
+# filter lncRNA with and without qval cutoff
+filter_lncrna <- dplyr::filter(table, gene_biotype==" lncRNA",transcript_type==" lncRNA", qval <= 0.05)
+#filter_lncrna <- dplyr::filter(table, gene_biotype==" lncRNA",transcript_type==" lncRNA")
 filter_lncrna
 
 # first 20 lncRNA
-EnhancedVolcano(filter_lncrna, lab = filter_lncrna$ext_gene, x = "b", y = "qval", title = "lncRNA differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE)
+EnhancedVolcano(filter_lncrna, lab = filter_lncrna$ext_gene, x = "b", y = "qval", title = "lncRNA differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE, pCutoff = 0.05)
 
 
 # filter protein coding
-filter_protein <- dplyr::filter(table, gene_biotype==" protein_coding",  qval <= 0.05, transcript_type==" protein_coding")
+#filter_protein <- dplyr::filter(table, gene_biotype==" protein_coding",  qval <= 0.05, transcript_type==" protein_coding")
+filter_protein <- dplyr::filter(table, gene_biotype==" protein_coding",transcript_type==" protein_coding")
 filter_protein
 
 # first 20 protein_coding
-EnhancedVolcano(filter_protein, lab = filter_protein$ext_gene, x = "b", y = "qval", title = "protein differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE)
+EnhancedVolcano(filter_protein, lab = filter_protein$ext_gene, x = "b", y = "qval", title = "protein differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE, pCutoff = 0.05)
 
 
+# filter novel
+filter_novel <- dplyr::filter(table,gene_biotype=="novel",  qval <= 0.05)
+filter_novel
+
+EnhancedVolcano(filter_novel, lab = filter_novel$ens_gene, x = "b", y = "qval", title = "novel gene differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE)
 # Heat map
 #merge for each sample, R2-P3 tmp values for each genes with lncrna and protein
+#norm_prep <-  sleuth_prep(metadata, condition, target_mapping = annotable, read_bootstrap_tpm = TRUE, extra_bootstrap_summary = TRUE, transform_fun_counts = function(x) log2(x + 0.5), num_cores = 8, normalize = TRUE)
+#plot_transcript_heatmap(table,transcripts = sleuth_significant$target_id)
+
+#matrix_data <- matrix(sc2$obs_norm, nrow = length(unique(sc2$obs_norm$target_id)), ncol = length(unique(sc2$obs_norm$sample)), byrow = TRUE)
+
+#write table
+write.table(table,"geneExpression.txt")
+
+#data <- read.table("geneExpression.txt")
+#data
+
+
