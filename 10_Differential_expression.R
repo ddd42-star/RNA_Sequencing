@@ -125,9 +125,35 @@ EnhancedVolcano(filter_novel, lab = filter_novel$ens_gene, x = "b", y = "qval", 
 #matrix_data <- matrix(sc2$obs_norm, nrow = length(unique(sc2$obs_norm$target_id)), ncol = length(unique(sc2$obs_norm$sample)), byrow = TRUE)
 
 #write table
-write.table(table,"geneExpression.txt")
+write.table(table,"transcriptExpression.txt")
 
 #data <- read.table("geneExpression.txt")
 #data
 
+# gene count
 
+sc1 <- sleuth_prep(metadata, condition,target_mapping = annotable, aggregation_column = "ens_gene",gene_mode=TRUE,read_bootstrap_tpm = TRUE, extra_bootstrap_summary = FALSE, transform_fun_counts = function(x) log2(x + 0.5))
+
+# first fit
+
+no <- sleuth_fit(sc1, condition,fit_name = "full")
+
+# second fit
+nn <- sleuth_fit(no,~ 1,"reduced")
+models(nn)
+
+gwt <- sleuth_wt(nn,"metadata$conditionreads","full")
+# wt test
+genes_count <- sleuth_results(gwt,"metadata$conditionreads","wt",show_all = TRUE)
+genes_count
+
+sleuth_significant_gene <- dplyr::filter(genes_count, qval <= 0.05)
+sleuth_significant_gene
+
+#write table
+write.table(genes_count,"geneExpression.txt")
+
+# transcript counts
+genes_counts <- sleuth_to_matrix(gwt,"obs_norm", "scaled_reads_per_base")
+genes_counts
+write.table(genes_counts,file = "counts_per_genes.txt")
