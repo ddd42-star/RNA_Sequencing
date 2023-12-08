@@ -7,8 +7,11 @@ BED=/data/users/dbassi/rnaseq_course/bed
 awk '{print $4}' $BED/overlap3prime.bed | grep 'MSTR' | uniq | wc -l
 #5 prime new
 awk '{print $4}' $BED/overlap5prime.bed | grep 'MSTR' | uniq | wc -l
+# 5 and 3 prime new
+awk '{print $4}' $BED/overlap53prime.bed | grep 'MSTR' | uniq | wc -l
 
 awk '{print $4}' $BED/overlap3prime.bed | grep 'MSTR' | uniq > $BED/novel3intergenic.txt
 awk '{print $4}' $BED/overlap5prime.bed | grep 'MSTR' | uniq > $BED/novel5intergenic.txt
+awk '{print $4}' $BED/overlap53prime.bed | grep 'MSTR' | uniq > $BED/novel53intergenic.txt
 
 
