@@ -16,6 +16,6 @@ awk '{if($3<0 || $2<0) print $1,0,0,$4,$5,$6; else print $1,$2,$3,$4,$5,$6}' $BE
 
 awk '{print $1,$2,$3,$4,$5,$6}' $BED/atlas.clusters.2.0.GRCh38.96.bed  | tr ' ' '\t' | sed 's/^/chr/' > $BED/polyArefactor.bed
 # Bedtools intersect for 3' ends forward strands (+)
-bedtools intersect -wa -s -a $BED/window3prime2.bed -b $BED/polyArefactor.bed > $BED/overlap3primeForward.bed
+bedtools intersect -wa -s -a $BED/window3prime2.bed -b $BED/polyArefactor.bed > $BED/overlap3primeA.bed
 # Bedtools intersect for 3' ends reverse strands (-)
-bedtools intersect -wa -S -a $BED/window3prime2.bed -b $BED/polyArefactor.bed > $BED/overlap3Reverseprime.bed
+bedtools intersect -wa -wb -s -a $BED/window3prime2.bed -b $BED/polyArefactor.bed > $BED/overlap3primeBoth.bed
