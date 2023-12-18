@@ -67,7 +67,7 @@ cc <- sleuth_wt(op,"metadata$conditionreads","full")
 
 models(cc)
 # results shown
-table <- sleuth_results(cc,"metadata$conditionreads","wt", which_model = "full",show_all = FALSE)
+table <- sleuth_results(cc,"metadata$conditionreads","wt", which_model = "full",show_all = TRUE)
 table
 sleuth_significant <- dplyr::filter(table, qval <= 0.05)
 
@@ -127,12 +127,17 @@ EnhancedVolcano(filter_novel, lab = filter_novel$ens_gene, x = "b", y = "qval", 
 #write table
 write.table(table,"transcriptExpression.txt")
 
+count_transcript <- sleuth_to_matrix(cc,"obs_norm", "est_counts")
+count_transcript
+write.table(count_transcript,"count_transcript.txt")
+# count transcript
+
 #data <- read.table("geneExpression.txt")
 #data
 
 # gene count
 
-sc1 <- sleuth_prep(metadata, condition,target_mapping = annotable, aggregation_column = "ens_gene",gene_mode=TRUE,read_bootstrap_tpm = TRUE, extra_bootstrap_summary = FALSE, transform_fun_counts = function(x) log2(x + 0.5))
+sc1 <- sleuth_prep(metadata, condition,target_mapping = annotable, aggregation_column = "ens_gene",gene_mode=TRUE,read_bootstrap_tpm = TRUE, extra_bootstrap_summary = TRUE, transform_fun_counts = function(x) log2(x + 0.5))
 
 # first fit
 
