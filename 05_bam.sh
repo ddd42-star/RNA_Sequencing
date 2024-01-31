@@ -13,6 +13,8 @@ MAP=/data/users/dbassi/rnaseq_course/mapped_reads2
 # load the module for transforming a sam file into a bam files
 module add UHTS/Analysis/samtools/1.10;
 
+# call each file that you wants to transform from here /data/users/dbassi/rnaseq_course/mapped_reads2  
+
 # transform a sam file into a bam file
 samtools view -b -@ $THREADS $MAP/P3_L3.sam > $MAP/P3_L3_unsorted.bam
 

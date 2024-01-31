@@ -19,6 +19,8 @@ mkdir -p /data/users/dbassi/rnaseq_course/transcriptome_assembly/PRI
 # load StringTie module
 module add UHTS/Aligner/stringtie/1.3.3b
 
+# call each file that you wants to transform from here /data/users/dbassi/rnaseq_course/mapped_reads2  
+
 # reference-guided transcriptome assembly
 # -p is the number of threads, --rf is the library stradness, -G is the reference Guide annotation
 stringtie -o $ASSEMBLY/P3_L3.gtf -p $THREADS --rf -G $REFERENCE/gencode.v44.primary_assembly.annotation.gtf $MAP/P3_L3.bam

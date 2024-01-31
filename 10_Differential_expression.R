@@ -1,5 +1,5 @@
 library("sleuth")
-
+# to install sleuth goes to https://pachterlab.github.io/sleuth/about
 # set directory path
 setwd("/home/dario/Documenti/RNA_seq/RNA_lncSeq/RNA_Sequencing")
 
@@ -71,17 +71,9 @@ table <- sleuth_results(cc,"metadata$conditionreads","wt", which_model = "full",
 table
 sleuth_significant <- dplyr::filter(table, qval <= 0.05)
 
-# likelihood model (other possible test)
-#wt <- sleuth_lrt(nop,"reduced", "full")
-
 #print first 20 values
 head(sleuth_significant,40)
 
-#plot_bootstrap(wt,"ENST00000335211.9",units = "est_counts", color_by = "condition")
-#plot_pca(wt, color_by = "condition")
-
-#plot_volcano(cc,"metadata$conditionreads","wt", which_model = "full", sig_level = 0.1, point_alpha = 0.05, sig_color = "red", highlight = annotable$target_id)
-#plot_transcript_heatmap(cc,head(ll,n=20)$target_id,"est_counts")
 
 library(EnhancedVolcano)
 #plot with pCutoff <= 0.05
@@ -117,12 +109,7 @@ filter_novel <- dplyr::filter(table,gene_biotype=="novel",  qval <= 0.05)
 filter_novel
 
 EnhancedVolcano(filter_novel, lab = filter_novel$ens_gene, x = "b", y = "qval", title = "novel gene differential expression paraclonal vs parental", legendPosition = "right", drawConnectors = TRUE)
-# Heat map
-#merge for each sample, R2-P3 tmp values for each genes with lncrna and protein
-#norm_prep <-  sleuth_prep(metadata, condition, target_mapping = annotable, read_bootstrap_tpm = TRUE, extra_bootstrap_summary = TRUE, transform_fun_counts = function(x) log2(x + 0.5), num_cores = 8, normalize = TRUE)
-#plot_transcript_heatmap(table,transcripts = sleuth_significant$target_id)
 
-#matrix_data <- matrix(sc2$obs_norm, nrow = length(unique(sc2$obs_norm$target_id)), ncol = length(unique(sc2$obs_norm$sample)), byrow = TRUE)
 
 #write table
 write.table(table,"transcriptExpression.txt")

@@ -22,5 +22,6 @@ mkdir -p /data/users/dbassi/rnaseq_course/mapped_reads2
 cd $READS
 
 # align RNA reads to the genome
+# call the name of the file of the reads found here /data/users/dbassi/rnaseq_course/reads
 # -p performing with threads, -x index genome, -1 and -2 pair reads (forward and reverse), -S sam output file
 hisat2 -p $THREADS --rna-strandness RF -x $INDEX/GRCh38 -1 $READS/P3_L3_R1_001_fjv6hlbFgCST.fastq -2 $READS/P3_L3_R2_001_xo7RBLLYYqeu.fastq -S $MAP/P3_L3.sam
